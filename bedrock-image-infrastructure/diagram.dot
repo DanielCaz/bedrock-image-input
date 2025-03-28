@@ -1,0 +1,199 @@
+digraph "Diagram" {
+  splines = "ortho";
+  pad = "1.0";
+  nodesep = "0.60";
+  ranksep = "0.75";
+  fontname = "Sans-Serif";
+  fontsize = "15";
+  dpi = "200";
+  rankdir = "BT";
+  compound = "true";
+  fontcolor = "#222222";
+  edge [
+    color = "#D5871488",
+    penwidth = 2,
+    arrowhead = "dot",
+    arrowtail = "dot",
+  ];
+  node [
+    shape = "box",
+    style = "rounded",
+    fixedsize = true,
+    width = 1.7,
+    height = 1.7,
+    labelloc = "c",
+    imagescale = true,
+    fontname = "Sans-Serif",
+    fontsize = 8,
+    margin = 8,
+  ];
+  subgraph "BedrockImageInfrastructureStack" {
+    subgraph "cluster-SubGraph.BedrockImageInfrastructureStack" {
+      graph [
+        label = "BedrockImageInfrastructureStack",
+        labelloc = "b",
+        labeljust = "l",
+        margin = "10",
+        fontsize = "16",
+        penwidth = "2",
+        pencolor = "#888888",
+        style = "filled,rounded",
+        fillcolor = "#e4e4e4",
+      ];
+      "BedrockImageInfrastructureStack/PDFBucket" [
+        label = " PDFBucket",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Storage/64/Arch_Amazon-S3-Standard_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "BedrockImageInfrastructureStack/ImagesBucket" [
+        label = " ImagesBucket",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Storage/64/Arch_Amazon-S3-Standard_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "BedrockImageInfrastructureStack/ImageQueue" [
+        label = " ImageQueue",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_App-Integration/Arch_64/Arch_AWS-Simple-Queue-Service_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "BedrockImageInfrastructureStack/BedrockImageApi" [
+        label = " BedrockImageApi",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Networking-Content/64/Arch_Amazon-API-Gateway_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.466,
+      ];
+      "BedrockImageInfrastructureStack/ImageStateMachine" [
+        label = " ImageStateMachine",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_App-Integration/Arch_64/Arch_AWS-Step-Functions_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.466,
+      ];
+      "BedrockImageInfrastructureStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role" [
+        label = " Role",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Security-Identity-Compliance/64/Arch_AWS-Identity-and-Access-Management_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.466,
+      ];
+      "BedrockImageInfrastructureStack/PresignedUrlFunction/PresignedUrlFunction" [
+        label = " PresignedUrlFunction",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_AWS-Lambda_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "BedrockImageInfrastructureStack/StartStepFunction/StartStepFunction" [
+        label = " StartStepFunction",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_AWS-Lambda_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "BedrockImageInfrastructureStack/ExtractImagesFunction/ExtractImagesFunction" [
+        label = "\nExtractImagesFunction",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_AWS-Lambda_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.4819999999999998,
+      ];
+      "BedrockImageInfrastructureStack/CallBedrockFunction/CallBedrockFunction" [
+        label = " CallBedrockFunction",
+        fontsize = 12,
+        image = "/home/danidan/vscode/iac/cdk/stacks/personal/bedrock-image-input/bedrock-image-infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_AWS-Lambda_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+    }
+  }
+  "BedrockImageInfrastructureStack/ImageQueue" -> "BedrockImageInfrastructureStack/PDFBucket" [
+    dir = "both",
+  ];
+  "BedrockImageInfrastructureStack/BedrockImageApi" -> "BedrockImageInfrastructureStack/PresignedUrlFunction/PresignedUrlFunction" [
+    dir = "both",
+  ];
+  "BedrockImageInfrastructureStack/ImageStateMachine" -> "BedrockImageInfrastructureStack/ExtractImagesFunction/ExtractImagesFunction" [
+    dir = "both",
+  ];
+  "BedrockImageInfrastructureStack/ImageStateMachine" -> "BedrockImageInfrastructureStack/CallBedrockFunction/CallBedrockFunction" [
+    dir = "both",
+  ];
+  "BedrockImageInfrastructureStack/PresignedUrlFunction/PresignedUrlFunction" -> "BedrockImageInfrastructureStack/PDFBucket" [
+    dir = "both",
+  ];
+  "BedrockImageInfrastructureStack/StartStepFunction/StartStepFunction" -> "BedrockImageInfrastructureStack/ImageQueue" [
+    dir = "both",
+  ];
+  "BedrockImageInfrastructureStack/StartStepFunction/StartStepFunction" -> "BedrockImageInfrastructureStack/ImageStateMachine" [
+    dir = "both",
+  ];
+  "BedrockImageInfrastructureStack/ExtractImagesFunction/ExtractImagesFunction" -> "BedrockImageInfrastructureStack/ImagesBucket" [
+    dir = "both",
+  ];
+}
