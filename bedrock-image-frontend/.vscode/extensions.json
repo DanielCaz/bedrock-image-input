@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "formulahendry.auto-rename-tag",
+    "dsznajder.es7-react-js-snippets",
+    "dbaeumer.vscode-eslint",
+    "streetsidesoftware.code-spell-checker",
+    "esbenp.prettier-vscode",
+    "YoavBls.pretty-ts-errors",
+    "streetsidesoftware.code-spell-checker-spanish",
+    "bradlc.vscode-tailwindcss",
+    "kushagra-aa.wrap-it"
+  ]
+}

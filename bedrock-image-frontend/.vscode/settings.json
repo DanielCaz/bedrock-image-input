@@ -1,0 +1,22 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true,
+    "**/.vscode/settings.json": true,
+    "**/.vscode/extensions.json": true
+  },
+  "search.exclude": {
+    "**/routeTree.gen.ts": true,
+    "**/.vscode/settings.json": true,
+    "**/.vscode/extensions.json": true
+  },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true,
+    "**/.vscode/settings.json": true,
+    "**/.vscode/extensions.json": true
+  },
+  "cSpell.language": "en,es-ES",
+  "reactSnippets.settings.importReactOnTop": false,
+  "javascript.updateImportsOnFileMove.enabled": "always"
+}
