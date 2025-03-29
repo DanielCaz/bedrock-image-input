@@ -4,5 +4,8 @@ import { BedrockImageInfrastructureStack } from "../lib/bedrock-image-infrastruc
 
 const app = new cdk.App();
 new BedrockImageInfrastructureStack(app, "BedrockImageInfrastructureStack", {
-  env: { account: "881746487492", region: "us-east-1" },
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
 });
