@@ -52,6 +52,9 @@ export class BedrockImageInfrastructureStack extends cdk.Stack {
 
     bucketPDF.grantPut(lambdaPresigned.function);
 
+    const { lambdaExtractImages, lambdaCallBedrock, stateMachine } =
+      this.buildStateMachine();
+
     const startStepFunction = new ccloud_lambda.Function(
       this,
       "StartStepFunction",
@@ -59,9 +62,59 @@ export class BedrockImageInfrastructureStack extends cdk.Stack {
         codePath: "lambda/functions/start_sf",
         powertoolsLayerVersion: 7,
         timeout: cdk.Duration.minutes(1),
+        environment: {
+          STATE_MACHINE_ARN: stateMachine.stateMachineArn,
+        },
       }
     );
 
+    startStepFunction.function.addEventSource(
+      new lambdaSources.SqsEventSource(queue)
+    );
+
+    lambdaExtractImages.function.addEnvironment(
+      "BUCKET_NAME",
+      bucketImages.bucketName
+    );
+
+    stateMachine.grantStartExecution(startStepFunction.function);
+
+    bucketPDF.grantRead(lambdaExtractImages.function);
+    bucketImages.grantPut(lambdaExtractImages.function);
+    bucketImages.grantRead(lambdaCallBedrock.function);
+  }
+
+  private buildApiGateway() {
+    const api = new apigw.RestApi(this, "BedrockImageApi", {
+      deployOptions: {
+        tracingEnabled: true,
+      },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
+      },
+    });
+
+    const lambdaPresigned = new ccloud_lambda.Function(
+      this,
+      "PresignedUrlFunction",
+      {
+        codePath: "lambda/functions/presigned",
+        powertoolsLayerVersion: 7,
+        timeout: cdk.Duration.seconds(30),
+      }
+    );
+
+    const resourcePresigned = api.root.addResource("presigned");
+    resourcePresigned.addMethod(
+      "POST",
+      new apigw.LambdaIntegration(lambdaPresigned.function)
+    );
+
+    return { lambdaPresigned };
+  }
+
+  private buildStateMachine() {
     const layerPyMuPDF = new lambda.LayerVersion(this, "PyMuPDFLayer", {
       code: lambda.Code.fromAsset("lambda/layers/PyMuPDF"),
       compatibleRuntimes: [
@@ -80,9 +133,6 @@ export class BedrockImageInfrastructureStack extends cdk.Stack {
       {
         codePath: "lambda/functions/extract_images",
         powertoolsLayerVersion: 7,
-        environment: {
-          BUCKET_NAME: bucketImages.bucketName,
-        },
         timeout: cdk.Duration.minutes(5),
         memorySize: 1024,
         architecture: lambda.Architecture.X86_64,
@@ -124,51 +174,13 @@ export class BedrockImageInfrastructureStack extends cdk.Stack {
       tracingEnabled: true,
     });
 
-    startStepFunction.function.addEnvironment(
-      "STATE_MACHINE_ARN",
-      stateMachine.stateMachineArn
-    );
-
-    stateMachine.grantStartExecution(startStepFunction.function);
     lambdaExtractImages.function.grantInvoke(stateMachine);
     lambdaCallBedrock.function.grantInvoke(stateMachine);
 
-    startStepFunction.function.addEventSource(
-      new lambdaSources.SqsEventSource(queue)
-    );
-
-    bucketPDF.grantRead(lambdaExtractImages.function);
-    bucketImages.grantPut(lambdaExtractImages.function);
-    bucketImages.grantRead(lambdaCallBedrock.function);
-  }
-
-  private buildApiGateway() {
-    const api = new apigw.RestApi(this, "BedrockImageApi", {
-      deployOptions: {
-        tracingEnabled: true,
-      },
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigw.Cors.ALL_ORIGINS,
-        allowMethods: apigw.Cors.ALL_METHODS,
-      },
-    });
-
-    const lambdaPresigned = new ccloud_lambda.Function(
-      this,
-      "PresignedUrlFunction",
-      {
-        codePath: "lambda/functions/presigned",
-        powertoolsLayerVersion: 7,
-        timeout: cdk.Duration.seconds(30),
-      }
-    );
-
-    const resourcePresigned = api.root.addResource("presigned");
-    resourcePresigned.addMethod(
-      "POST",
-      new apigw.LambdaIntegration(lambdaPresigned.function)
-    );
-
-    return { lambdaPresigned };
+    return {
+      lambdaExtractImages,
+      lambdaCallBedrock,
+      stateMachine,
+    };
   }
 }
