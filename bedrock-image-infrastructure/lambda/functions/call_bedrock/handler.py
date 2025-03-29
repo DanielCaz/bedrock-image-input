@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import boto3
 from base64 import b64encode
@@ -21,8 +22,29 @@ def lambda_handler(event: dict, context: LambdaContext):
     bucket = event["output"]["bucket"]
     folder = unquote_plus(event["output"]["folder"])
 
-    logger.info(f"Processing images from bucket: {bucket}, folder: {folder}")
+    logger.info(
+        "Processing images from bucket", extra={"bucket": bucket, "folder": folder}
+    )
 
+    response_bedrock = call_bedrock(bucket, folder)
+
+    response_bedrock_body = json.loads(response_bedrock["body"].read().decode("utf-8"))
+
+    stop_reason = response_bedrock_body["stopReason"]
+    if stop_reason != "end_turn":
+        logger.error(f"Unexpected stop reason: {stop_reason}")
+
+        raise Exception(f"Unexpected stop reason: {stop_reason}")
+
+    json_response = format_ai_response(response_bedrock_body)
+
+    return {
+        "message": "Success",
+        "ai_response": json_response,
+    }
+
+
+def call_bedrock(bucket: str, folder: str):
     images = get_images(bucket, folder)
 
     response = bedrock.invoke_model(
@@ -31,6 +53,7 @@ def lambda_handler(event: dict, context: LambdaContext):
         accept="application/json",
         body=json.dumps(
             {
+                "system": [{"text": "You are a document analysis assistant."}],
                 "messages": [
                     {
                         "role": "user",
@@ -55,55 +78,71 @@ def lambda_handler(event: dict, context: LambdaContext):
                                 - Maintain proper paragraph breaks and section divisions
 
                                 Response style and format requirements:
+                                - Respond in the same language as the input
                                 - Return the output as a valid JSON object
                                 - Use appropriate nesting to represent document hierarchy
                                 - Include a 'pages' array containing content from each page
-                                - All extracted text should be summarized and presented in a short, clear and concise manner
                                 - Output Schema:
-                                [{
-                                    "page_number": page number goes here,
-                                    "summary": "extracted text goes here",
-                                    "tables": [
+                                {
+                                    "pages": [
                                         {
-                                            "table_number": table number goes here,
-                                            "content": [
-                                                ["row1col1", "row1col2"],
-                                                ["row2col1", "row2col2"]
+                                            "page_number": page number goes here,
+                                            "summary": "summary of the page goes here",
+                                            "tables": [
+                                                {
+                                                    "table_number": table number goes here,
+                                                    "content": [
+                                                        ["row1col1", "row1col2", ...],
+                                                        ["row2col1", "row2col2", ...],
+                                                        ...
+                                                    ]
+                                                }
+                                            ],
+                                            "lists": [
+                                                {
+                                                    "list_number": list number goes here,
+                                                    "items": ["item1", "item2", ...]
+                                                }
+                                            ],
+                                            "images": [
+                                                {
+                                                    "image_number": image number goes here,
+                                                    "description": "description of the image goes here"
+                                                }
                                             ]
-                                        }
-                                    ],
-                                    "lists": [
-                                        {
-                                            "list_number": list number goes here,
-                                            "items": ["item1", "item2"]
-                                        }
-                                    ],
-                                    "images": [
-                                        {
-                                            "image_number": image number goes here,
-                                            "description": "description of the image goes here"
-                                        }
+                                        },
+                                        ...
                                     ]
-                                }]
+                                }
                                 - Use clear, descriptive keys for all JSON elements
                                 - Preserve formatting where semantically meaningful
                                 - Ensure the JSON is valid and well-structured
                                 """,
                             },
                         ],
-                    }
-                ]
+                    },
+                    {
+                        "role": "assistant",
+                        "content": [
+                            {"text": "```json"},
+                        ],
+                    },
+                ],
             }
         ),
         trace="ENABLED",
     )
 
-    response_body = json.loads(response["body"].read().decode("utf-8"))
+    return response
 
-    return {
-        "message": "Success",
-        "ai_response": response_body,
-    }
+
+def format_ai_response(response_body: dict):
+    markdown: str = response_body["output"]["message"]["content"][0]["text"]
+
+    json_response = markdown[:-3].replace('\\"', '"')
+    json_response = re.sub(r"(?<!\\)\n", "", json_response).strip()
+
+    return json.loads(json_response)
 
 
 def get_images(bucket: str, folder: str):
