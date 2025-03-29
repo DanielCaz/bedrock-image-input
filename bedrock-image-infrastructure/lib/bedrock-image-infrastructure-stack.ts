@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import {
+  aws_iam as iam,
   aws_apigateway as apigw,
   aws_s3 as s3,
   aws_s3_notifications as s3Notifications,
@@ -97,6 +98,18 @@ export class BedrockImageInfrastructureStack extends cdk.Stack {
         powertoolsLayerVersion: 7,
         timeout: cdk.Duration.minutes(5),
         memorySize: 1024,
+        environment: {
+          MODEL_ID: "amazon.nova-lite-v1:0",
+        },
+        iamPolicy: [
+          {
+            effect: iam.Effect.ALLOW,
+            actions: ["bedrock:InvokeModel"],
+            resources: [
+              `arn:aws:bedrock:${this.region}::foundation-model/amazon.nova-lite-v1:0`,
+            ],
+          },
+        ],
       }
     );
 

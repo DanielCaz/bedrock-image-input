@@ -57,7 +57,7 @@ def lambda_handler(event: dict, context: LambdaContext):
 
         return {
             "message": "Images extracted successfully",
-            "output": {"bucket": BUCKET_NAME, "output": base_key},
+            "output": {"bucket": BUCKET_NAME, "folder": base_key},
         }
 
     except Exception as e:

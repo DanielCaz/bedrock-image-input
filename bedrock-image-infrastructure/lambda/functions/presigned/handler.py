@@ -34,7 +34,6 @@ def main():
         Conditions=[
             {"Content-Type": "application/pdf"},
             {"success_action_status": "201"},
-            ["content-length-range", 0, 5242880],  # 5MB
         ],
     )
 
